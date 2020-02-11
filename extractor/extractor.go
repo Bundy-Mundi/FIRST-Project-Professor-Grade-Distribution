@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-var baseURL = "C://Users/exit2/Desktop/WorkSpace/tabula-spring_2019.csv"
+var baseURL = "C://Users/exit2/Desktop/WorkSpace/"
 
 // Course Structure
 type Course struct {
@@ -30,8 +30,9 @@ type grade struct {
 }
 
 // Extract Files
-func Extract() []byte {
-	csvFile, err := os.Open(baseURL)
+func Extract(fileName string) []byte {
+	url := baseURL + fileName
+	csvFile, err := os.Open(url)
 	if err != nil {
 		fmt.Println(err)
 	}
