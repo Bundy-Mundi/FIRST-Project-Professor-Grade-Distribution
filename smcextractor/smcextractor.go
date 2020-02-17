@@ -1,4 +1,4 @@
-package extractor
+package smcextractor
 
 import (
 	"encoding/csv"
@@ -30,7 +30,7 @@ type grade struct {
 }
 
 // ExtractJSON Files
-func ExtractJSON(fileName string) []byte {
+func ExtractJSON(fileName string, rowCount map[string]int) []byte {
 	url := baseURL + fileName
 	csvFile, err := os.Open(url)
 	if err != nil {
@@ -41,7 +41,7 @@ func ExtractJSON(fileName string) []byte {
 	reader.FieldsPerRecord = -1
 
 	csvData, err := reader.ReadAll()
-	results := getAllCors(csvData)
+	results := getAllCors(csvData, rowCount)
 	jsonData, err := json.Marshal(results)
 	if err != nil {
 		fmt.Println(err)
@@ -51,7 +51,7 @@ func ExtractJSON(fileName string) []byte {
 }
 
 // ExtractRAW Files
-func ExtractRAW(fileName string) []Course {
+func ExtractRAW(fileName string, rowCount map[string]int) []Course {
 	url := baseURL + fileName
 	csvFile, err := os.Open(url)
 	if err != nil {
@@ -62,7 +62,7 @@ func ExtractRAW(fileName string) []Course {
 	reader.FieldsPerRecord = -1
 
 	csvData, err := reader.ReadAll()
-	rawData := getAllCors(csvData)
+	rawData := getAllCors(csvData, rowCount)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -70,43 +70,30 @@ func ExtractRAW(fileName string) []Course {
 	return rawData
 }
 
-func getAllCors(row [][]string) []Course {
+func getAllCors(row [][]string, rowCount map[string]int) []Course {
 	var cors []Course
 	var tempCourseName string
-
-	courseName := 2
-	profName := 3
-	colA := 4
-	colB := 5
-	colC := 6
-	colD := 7
-	colF := 8
-	colNP := 11
-	colP := 12
-	colW := 14
-	colT := 15
-
 	for i := 1; i < len(row); i++ {
-		Name := row[i][courseName]
+		Name := row[i][rowCount["courseName"]]
 		if Name != "" {
 			tempCourseName = Name
 		}
-		Professor := row[i][profName]
-		Students := row[i][colT]
+		Professor := row[i][rowCount["profName"]]
+		Students := row[i][rowCount["colT"]]
 		Grades := grade{
-			A:  row[i][colA],
-			B:  row[i][colB],
-			C:  row[i][colC],
-			D:  row[i][colD],
-			F:  row[i][colF],
-			NP: row[i][colNP],
-			P:  row[i][colP],
-			W:  row[i][colW],
+			A:  row[i][rowCount["colA"]],
+			B:  row[i][rowCount["colB"]],
+			C:  row[i][rowCount["colC"]],
+			D:  row[i][rowCount["colD"]],
+			F:  row[i][rowCount["colF"]],
+			NP: row[i][rowCount["colNP"]],
+			P:  row[i][rowCount["colP"]],
+			W:  row[i][rowCount["colW"]],
 		}
 		ID := i
-
 		newCourse := Course{tempCourseName, Professor, Grades, Students, ID}
 		cors = append(cors, newCourse)
+		// fmt.Println(Professor, Students, Grades)
 	}
 	return cors
 }
