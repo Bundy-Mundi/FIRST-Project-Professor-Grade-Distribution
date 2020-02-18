@@ -5,9 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 )
-
-var baseURL = "C://Users/exit2/Desktop/WorkSpace/"
 
 // Course Structure
 type Course struct {
@@ -31,7 +30,14 @@ type grade struct {
 
 // ExtractJSON Files
 func ExtractJSON(fileName string, rowCount map[string]int) []byte {
-	url := baseURL + fileName
+
+	// Get the CSV File's Directory
+	url, err := filepath.Abs(fileName)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// Open the CSV File
 	csvFile, err := os.Open(url)
 	if err != nil {
 		fmt.Println(err)
@@ -39,9 +45,12 @@ func ExtractJSON(fileName string, rowCount map[string]int) []byte {
 	defer csvFile.Close()
 	reader := csv.NewReader(csvFile)
 	reader.FieldsPerRecord = -1
-
 	csvData, err := reader.ReadAll()
+
+	// Store Data Into []Map
 	results := getAllCors(csvData, rowCount)
+
+	// Convert Data Into a Json
 	jsonData, err := json.Marshal(results)
 	if err != nil {
 		fmt.Println(err)
@@ -52,7 +61,10 @@ func ExtractJSON(fileName string, rowCount map[string]int) []byte {
 
 // ExtractRAW Files
 func ExtractRAW(fileName string, rowCount map[string]int) []Course {
-	url := baseURL + fileName
+	url, err := filepath.Abs(fileName)
+	if err != nil {
+		fmt.Println(err)
+	}
 	csvFile, err := os.Open(url)
 	if err != nil {
 		fmt.Println(err)

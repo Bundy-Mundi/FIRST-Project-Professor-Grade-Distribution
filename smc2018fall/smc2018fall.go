@@ -8,14 +8,14 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/Bundy-Mundi/profgradedist/smcextractor"
+	"github.com/Bundy-Mundi/graderbackend/smcextractor"
 	"github.com/labstack/echo"
 )
 
 var errNoMatching = errors.New("NO MATCHING ID")
 
 // baseURL
-var baseURL string = "tabula-fall_2018.csv"
+var fileURL string = "csvfiles/smc/fall_2018.csv"
 
 // RowCount !!
 var RowCount = map[string]int{
@@ -35,14 +35,14 @@ var RowCount = map[string]int{
 // AllData 2018 FallFall
 func AllData(c echo.Context) error {
 
-	spring2019JSON := smcextractor.ExtractJSON(baseURL, RowCount)
+	spring2019JSON := smcextractor.ExtractJSON(fileURL, RowCount)
 	return c.JSONBlob(http.StatusOK, spring2019JSON)
 }
 
 // OneData Return One Data
 func OneData(c echo.Context) error {
 	ID, _ := strconv.Atoi(c.Param("id"))
-	spring2019RAW := smcextractor.ExtractRAW(baseURL, RowCount)
+	spring2019RAW := smcextractor.ExtractRAW(fileURL, RowCount)
 	for _, v := range spring2019RAW {
 		if v.ID == ID {
 			oneJSON, err := json.Marshal(v)
@@ -59,7 +59,7 @@ func OneData(c echo.Context) error {
 // ProfList 2018 Fall
 func ProfList(c echo.Context) error {
 	profList := make(map[int]string)
-	spring2019RAW := smcextractor.ExtractRAW(baseURL, RowCount)
+	spring2019RAW := smcextractor.ExtractRAW(fileURL, RowCount)
 	for _, v := range spring2019RAW {
 		p := v.Professor
 		if p == "" {
@@ -79,7 +79,7 @@ func ProfList(c echo.Context) error {
 // ClassList 2018 Fall
 func ClassList(c echo.Context) error {
 	classList := make(map[int]string)
-	spring2019RAW := smcextractor.ExtractRAW(baseURL, RowCount)
+	spring2019RAW := smcextractor.ExtractRAW(fileURL, RowCount)
 	for _, v := range spring2019RAW {
 		c := v.Name
 		classList[v.ID] = c
