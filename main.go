@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/Bundy-Mundi/graderbackend/gethome"
 	"github.com/Bundy-Mundi/graderbackend/smc2018fall"
@@ -23,6 +24,7 @@ func smc2019(c echo.Context) error {
 
 func main() {
 	e := echo.New()
+	port := os.Getenv("PORT")
 
 	// Middlewares
 	e.Use(middleware.CORS())
@@ -46,5 +48,5 @@ func main() {
 	e.GET("/api/v1/smc/2018/fall/prof", smc2018fall.ProfList)
 	e.GET("/api/v1/smc/2018/fall/class", smc2018fall.ClassList)
 
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(":" + port))
 }
