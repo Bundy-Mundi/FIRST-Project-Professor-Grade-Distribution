@@ -104,8 +104,9 @@ func getAllCors(row [][]string, rowCount map[string]int) []Course {
 		}
 		ID := i
 		newCourse := Course{tempCourseName, Professor, Grades, Students, ID}
-		cors = append(cors, newCourse)
-		// fmt.Println(Professor, Students, Grades)
+		if Professor != "" {
+			cors = append(cors, newCourse)
+		}
 	}
 	return cors
 }

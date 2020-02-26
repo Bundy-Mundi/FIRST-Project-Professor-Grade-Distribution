@@ -41,6 +41,8 @@ func main() {
 	e.GET("/api/v1/smc/2019/spring/:id", smc2019spring.OneData)
 	e.GET("/api/v1/smc/2019/spring/prof", smc2019spring.ProfList)
 	e.GET("/api/v1/smc/2019/spring/class", smc2019spring.ClassList)
+	e.GET("/api/v1/smc/2019/spring/prof/:name", smc2019spring.SearchByProfessor)
+	e.GET("/api/v1/smc/2019/spring/class/:name", smc2019spring.SearchByClass)
 
 	// SMC 2018 Fall
 	e.GET("/api/v1/smc/2018/fall", smc2018fall.AllData)
