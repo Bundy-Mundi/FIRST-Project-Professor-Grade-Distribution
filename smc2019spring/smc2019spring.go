@@ -55,59 +55,24 @@ func OneData(c echo.Context) error {
 	return errNoMatching
 }
 
-// ProfList 2019 Spring
-func ProfList(c echo.Context) error {
-	profList := make(map[int]string)
-	spring2019RAW := smcextractor.ExtractRAW(fileURL, RowCount)
-	for _, v := range spring2019RAW {
-		p := v.Professor
-		if p == "" {
-			p = v.Name
-		}
-		profList[v.ID] = p
-	}
-	cleanedList := cleanData(profList)
-	profJSON, err := json.Marshal(cleanedList)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	return c.JSONBlob(http.StatusOK, profJSON)
-}
-
-// SearchByProfessor Return OneData(id)
+// SearchByProfessor Return Key IDs
 func SearchByProfessor(c echo.Context) error {
-	matchCounter := 0
-	searchTerm := c.Param("name")
-	searchTermArray := strings.Split(searchTerm, "")
-	profList := make(map[int]string)
-	result := make([]int, matchCounter)
-
+	result := []int{}
 	spring2019RAW := smcextractor.ExtractRAW(fileURL, RowCount)
+	searchTerm := c.Param("name")
 	for _, v := range spring2019RAW {
-		p := v.Professor
-		if p == "" {
-			p = v.Name
-		}
-		profList[v.ID] = p
-	}
-	cleanedList := cleanData(profList)
-	for i := 0; i < len(cleanedList); i++ {
-		dataArray := strings.Split(cleanedList[i], "")
-		if len(dataArray) > 0 {
-			for i := 0; i < len(searchTermArray); i++ {
-				dataLetter := strings.ToLower(strings.TrimSuffix(dataArray[i], " "))
-				searchLetter := strings.ToLower(strings.TrimSuffix(searchTermArray[i], " "))
-				if dataLetter == searchLetter {
-					matchCounter++
-				}
+		// Make Terms into Slices
+		data := strings.Split(cleanSpace(v.Professor), "")
+		search := strings.Split(cleanSpace(searchTerm), "")
+		if len(data) > 0 {
+			// Check
+			ok := isMatch(data, search, 3)
+			if ok {
+				result = append(result, v.ID)
 			}
 		}
-		if matchCounter > 2 {
-			result = append(result, i)
-		}
-		matchCounter = 0
 	}
+	// Sending JSON
 	resultJSON, err := json.Marshal(result)
 	if err != nil {
 		fmt.Println(err)
@@ -116,57 +81,45 @@ func SearchByProfessor(c echo.Context) error {
 	return c.JSONBlob(http.StatusOK, resultJSON)
 }
 
-// ClassList 2019 Spring
-func ClassList(c echo.Context) error {
-	classList := make(map[int]string)
-	spring2019RAW := smcextractor.ExtractRAW(fileURL, RowCount)
-	for _, v := range spring2019RAW {
-		c := v.Name
-		classList[v.ID] = c
+func isMatch(data []string, search []string, restriction int) bool {
+	ok := false
+	var useShorter int
+	matchCounter := 0
+	// To Prevent Panic
+	if len(search) > len(data) {
+		useShorter = len(data)
+	} else {
+		useShorter = len(search)
 	}
-	cleanedList := cleanData(classList)
-	classJSON, err := json.Marshal(cleanedList)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	for i := 0; i < useShorter; i++ {
+		if data[0] == search[0] && data[i] == search[i] {
+			matchCounter++
+		}
 	}
-	return c.JSONBlob(http.StatusOK, classJSON)
+	if matchCounter >= restriction {
+		ok = true
+	}
+	return ok
 }
 
-// SearchByClass Return OneData(id)
+// SearchByClass Return key IDs
 func SearchByClass(c echo.Context) error {
-	matchCounter := 0
-	searchTerm := c.Param("name")
-	searchTermArray := strings.Split(searchTerm, "")
-	classList := make(map[int]string)
-	result := make([]int, matchCounter)
-
+	result := []int{}
 	spring2019RAW := smcextractor.ExtractRAW(fileURL, RowCount)
+	searchTerm := c.Param("name")
 	for _, v := range spring2019RAW {
-		p := v.Professor
-		c := v.Name
-		if p == "" {
-			p = c
-		}
-		classList[v.ID] = c
-	}
-	cleanedList := cleanData(classList)
-	for i := 0; i < len(cleanedList); i++ {
-		dataArray := strings.Split(cleanedList[i], "")
-		if len(dataArray) > 0 {
-			for i := 0; i < len(searchTermArray); i++ {
-				dataLetter := strings.ToLower(strings.TrimSuffix(dataArray[i], " "))
-				searchLetter := strings.ToLower(strings.TrimSuffix(searchTermArray[i], " "))
-				if dataLetter == searchLetter {
-					matchCounter++
-				}
+		// Make Terms into Slices
+		data := strings.Split(cleanSpace(v.Name), "")
+		search := strings.Split(cleanSpace(searchTerm), "")
+		if len(data) > 0 {
+			// Check
+			ok := isMatch(data, search, 2)
+			if ok {
+				result = append(result, v.ID)
 			}
 		}
-		if matchCounter > 2 {
-			result = append(result, i)
-		}
-		matchCounter = 0
 	}
+	// Sending JSON
 	resultJSON, err := json.Marshal(result)
 	if err != nil {
 		fmt.Println(err)
@@ -175,15 +128,6 @@ func SearchByClass(c echo.Context) error {
 	return c.JSONBlob(http.StatusOK, resultJSON)
 }
 
-func cleanData(data map[int]string) map[int]string {
-	for i := 0; i < len(data); i++ {
-		d := data[i]
-		for i2 := 0; i2 < len(data); i2++ {
-			check := data[i2]
-			if i != i2 && d == check {
-				delete(data, i2)
-			}
-		}
-	}
-	return data
+func cleanSpace(s string) string {
+	return strings.Join(strings.Fields(strings.ToLower(s)), "")
 }

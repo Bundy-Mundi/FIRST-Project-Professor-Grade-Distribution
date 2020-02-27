@@ -92,19 +92,19 @@ func getAllCors(row [][]string, rowCount map[string]int) []Course {
 		}
 		Professor := row[i][rowCount["profName"]]
 		Students := row[i][rowCount["colT"]]
-		Grades := grade{
-			A:  row[i][rowCount["colA"]],
-			B:  row[i][rowCount["colB"]],
-			C:  row[i][rowCount["colC"]],
-			D:  row[i][rowCount["colD"]],
-			F:  row[i][rowCount["colF"]],
-			NP: row[i][rowCount["colNP"]],
-			P:  row[i][rowCount["colP"]],
-			W:  row[i][rowCount["colW"]],
-		}
+		A := row[i][rowCount["colA"]]
+		B := row[i][rowCount["colB"]]
+		C := row[i][rowCount["colC"]]
+		D := row[i][rowCount["colD"]]
+		F := row[i][rowCount["colF"]]
+		NP := row[i][rowCount["colNP"]]
+		P := row[i][rowCount["colP"]]
+		W := row[i][rowCount["colW"]]
+
+		Grades := grade{A, B, C, D, F, NP, P, W}
 		ID := i
-		newCourse := Course{tempCourseName, Professor, Grades, Students, ID}
-		if Professor != "" {
+		if Professor != "" && Students != "" {
+			newCourse := Course{tempCourseName, Professor, Grades, Students, ID}
 			cors = append(cors, newCourse)
 		}
 	}
