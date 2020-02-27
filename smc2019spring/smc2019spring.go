@@ -91,6 +91,10 @@ func isMatch(data []string, search []string, restriction int) bool {
 	} else {
 		useShorter = len(search)
 	}
+	if len(search) > 6 {
+		fmt.Println(len(search))
+		restriction = 6
+	}
 	for i := 0; i < useShorter; i++ {
 		if data[0] == search[0] && data[i] == search[i] {
 			matchCounter++
