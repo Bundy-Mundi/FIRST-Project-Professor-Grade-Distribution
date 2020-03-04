@@ -38,15 +38,15 @@ func main() {
 
 	// SMC 2019 Spring
 	e.GET("/api/v1/smc/2019/spring", smc2019spring.AllData)
-	e.GET("/api/v1/smc/2019/spring/:id", smc2019spring.OneData)
+	e.GET("/api/v1/smc/2019/spring/:id", smc2019spring.GetByID)
 	e.GET("/api/v1/smc/2019/spring/prof/:name", smc2019spring.SearchByProfessor)
 	e.GET("/api/v1/smc/2019/spring/class/:name", smc2019spring.SearchByClass)
 
 	// SMC 2018 Fall
 	e.GET("/api/v1/smc/2018/fall", smc2018fall.AllData)
-	e.GET("/api/v1/smc/2018/fall/:id", smc2018fall.OneData)
-	e.GET("/api/v1/smc/2018/fall/prof/:name", smc2019spring.SearchByProfessor)
-	e.GET("/api/v1/smc/2018/fall/class/:name", smc2019spring.SearchByClass)
+	e.GET("/api/v1/smc/2018/fall/:id", smc2018fall.GetByID)
+	e.GET("/api/v1/smc/2018/fall/prof/:name", smc2018fall.SearchByProfessor)
+	e.GET("/api/v1/smc/2018/fall/class/:name", smc2018fall.SearchByClass)
 
 	e.Logger.Fatal(e.Start(":" + port))
 }

@@ -6,15 +6,17 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // Course Structure
 type Course struct {
-	Name      string
-	Professor string
-	Grades    grade
-	Students  string
-	ID        int
+	Name       string
+	Professor  string
+	Grades     grade
+	Students   string
+	ID         int
+	MatchQuery string
 }
 
 type grade struct {
@@ -100,11 +102,12 @@ func getAllCors(row [][]string, rowCount map[string]int) []Course {
 		NP := row[i][rowCount["colNP"]]
 		P := row[i][rowCount["colP"]]
 		W := row[i][rowCount["colW"]]
+		MatchQuery := strings.Join(strings.Fields(strings.ToLower(Professor+tempCourseName)), "")
 
 		Grades := grade{A, B, C, D, F, NP, P, W}
 		ID := i
 		if Professor != "" && Students != "" {
-			newCourse := Course{tempCourseName, Professor, Grades, Students, ID}
+			newCourse := Course{tempCourseName, Professor, Grades, Students, ID, MatchQuery}
 			cors = append(cors, newCourse)
 		}
 	}

@@ -38,8 +38,8 @@ func AllData(c echo.Context) error {
 	return c.JSONBlob(http.StatusOK, spring2019JSON)
 }
 
-// OneData Return One Data
-func OneData(c echo.Context) error {
+// GetByID Return One Data
+func GetByID(c echo.Context) error {
 	ID, _ := strconv.Atoi(c.Param("id"))
 	spring2019RAW := smcextractor.ExtractRAW(fileURL, RowCount)
 	for _, v := range spring2019RAW {
